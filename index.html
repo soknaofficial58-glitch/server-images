@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="km">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NiceStore - Official Website</title>
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&family=Kantumruy+Pro:wght@300;400;500;600;700&display=swap');
+        
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        :root {
+            --primary: #c44dff; 
+            --primary-pink: #ff6b9d;
+            --secondary: #00d4ff;
+            --darker: #050510; 
+            --card-bg: rgba(15, 15, 35, 0.82);
+            --text: #ffffff; 
+            --text-muted: #b0b0d0;
+            --gradient1: linear-gradient(135deg, #ff6b9d, #c44dff);
+            --gradient2: linear-gradient(135deg, #00d4ff, #c44dff);
+        }
+
+        body { 
+            font-family: 'Kantumruy Pro', 'Poppins', sans-serif; 
+            background: var(--darker); 
+            color: var(--text); 
+            overflow-x: hidden; 
+            min-height: 100vh; 
+            scroll-behavior: smooth; 
+        }
+
+        /* FIXED BACKGROUND */
+        .global-bg-wrapper {
+            position: fixed;
+            top: -5%; left: 0; width: 100%; height: 110%;
+            z-index: -2; overflow: hidden; pointer-events: none;
+        }
+
+        .global-bg-img {
+            width: 100%; height: 100%;
+            object-fit: cover; object-position: center 25%;
+            animation: gentleBgMotion 7s ease-in-out infinite alternate;
+            filter: brightness(0.8) contrast(1.05);
+        }
+
+        @keyframes gentleBgMotion {
+            0% { transform: translateY(0px) scale(1); }
+            100% { transform: translateY(-20px) scale(1.03); }
+        }
+
+        .global-bg-overlay {
+            position: fixed; inset: 0;
+            background: radial-gradient(circle at center, rgba(10, 10, 26, 0.4) 0%, rgba(5, 5, 16, 0.9) 100%),
+                        linear-gradient(to bottom, rgba(5, 5, 16, 0.4) 0%, rgba(5, 5, 16, 0.95) 100%);
+            z-index: -1; pointer-events: none;
+        }
+
+        /* SAKURA CANVAS */
+        #sakuraCanvas {
+            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+            pointer-events: none; z-index: 1;
+        }
+
+        /* NAVBAR */
+        .navbar { 
+            position: fixed; top: 0; left: 0; right: 0; z-index: 1000; 
+            padding: 10px 20px; display: flex; align-items: center; justify-content: space-between; 
+            background: rgba(5, 5, 16, 0.85); backdrop-filter: blur(15px); 
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1); 
+        }
+        .logo { display: flex; align-items: center; gap: 8px; text-decoration: none; cursor: pointer; }
+        .logo-icon { 
+            width: 32px; height: 32px; background: var(--gradient1); border-radius: 8px; 
+            display: flex; align-items: center; justify-content: center; font-size: 16px; 
+            font-weight: 900; color: white; box-shadow: 0 0 12px rgba(196, 77, 255, 0.4); 
+            flex-shrink: 0;
+        }
+        .logo-text { font-size: 16px; font-weight: 800; color: #fff; white-space: nowrap; }
+        
+        .nav-links { display: flex; align-items: center; gap: 16px; list-style: none; }
+        .nav-links a { 
+            color: var(--text-muted); text-decoration: none; font-weight: 500; font-size: 13px; 
+            transition: 0.3s; display: flex; align-items: center; gap: 6px; cursor: pointer;
+        }
+        .nav-links a:hover, .nav-links a.active-link { color: #00d4ff; }
+        
+        .nav-right { display: flex; gap: 8px; align-items: center; flex-shrink: 0; }
+        .btn-nav-auth {
+            background: var(--gradient1); color: white; border: none; padding: 6px 12px;
+            border-radius: 8px; font-weight: 600; font-size: 12px; cursor: pointer; transition: 0.3s;
+            display: flex; align-items: center; gap: 5px; box-shadow: 0 0 12px rgba(255, 107, 157, 0.3);
+            white-space: nowrap;
+        }
+        .btn-nav-auth:hover { transform: translateY(-2px); opacity: 0.9; }
+
+        .cart-btn {
+            background: rgba(255, 255, 255, 0.1); border: 1px solid rgba(255,255,255,0.2);
+            color: #fff; padding: 6px 10px; border-radius: 8px; cursor: pointer;
+            position: relative; transition: 0.3s; font-size: 13px;
+        }
+        .cart-btn:hover { background: rgba(255, 255, 255, 0.2); }
+        .cart-count {
+            position: absolute; top: -5px; right: -5px;
+            background: #ff6b9d; color: white; border-radius: 50%;
+            width: 16px; height: 16px; font-size: 9px; font-weight: bold;
+            display: flex; align-items: center; justify-content: center;
+        }
+
+        .hamburger { display: none; flex-direction: column; gap: 4px; cursor: pointer; z-index: 1002; padding: 4px; }
+        .hamburger span { width: 22px; height: 2.5px; background: #fff; border-radius: 2px; transition: 0.3s; }
+
+        /* MOBILE MENU WITH CLOSE BUTTON */
+        .mobile-menu {
+            position: fixed; top: 0; right: -100%; width: 270px; height: 100vh;
+            background: rgba(8, 8, 22, 0.96); backdrop-filter: blur(20px);
+            z-index: 1001; padding: 70px 20px 30px; display: flex; flex-direction: column; gap: 12px;
+            transition: 0.4s ease-in-out; border-left: 1px solid rgba(255,255,255,0.1);
+        }
+        .mobile-menu.open { right: 0; }
+        
+        .close-menu-btn {
+            position: absolute; top: 18px; right: 18px;
+            background: rgba(255, 255, 255, 0.1); border: 1px solid rgba(255, 255, 255, 0.2);
+            color: #fff; font-size: 22px; width: 36px; height: 36px; border-radius: 50%;
+            display: flex; align-items: center; justify-content: center; cursor: pointer;
+            transition: 0.3s;
+        }
+        .close-menu-btn:hover { background: rgba(255, 77, 77, 0.8); border-color: #ff4d4d; transform: rotate(90deg); }
+
+        .mobile-menu a {
+            color: #fff; text-decoration: none; font-size: 15px; font-weight: 600;
+            display: flex; align-items: center; gap: 12px; padding: 12px;
+            border-radius: 10px; transition: 0.3s; border-bottom: 1px solid rgba(255,255,255,0.05);
+        }
+        .mobile-menu a:hover { background: rgba(255,255,255,0.1); color: #00d4ff; }
+
+        /* HERO & PAGES */
+        .hero { position: relative; min-height: 90vh; display: flex; align-items: center; justify-content: center; padding: 120px 20px 60px; }
+        .hero-content { position: relative; z-index: 3; max-width: 850px; text-align: center; margin: 0 auto; }
+        .hero-badge {
+            display: inline-block; background: rgba(255, 107, 157, 0.18); border: 1px solid rgba(255, 107, 157, 0.5);
+            color: var(--primary-pink); padding: 6px 18px; border-radius: 20px; font-size: 12px; font-weight: 700;
+            letter-spacing: 1px; margin-bottom: 25px; backdrop-filter: blur(5px);
+        }
+        .hero h1 { font-size: 46px; font-weight: 800; line-height: 1.3; margin-bottom: 20px; text-shadow: 0 5px 20px rgba(0,0,0,0.9); }
+        .hero h1 .txt-pink { background: linear-gradient(135deg, #ff8dae, #c44dff); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .hero h1 .txt-blue { background: linear-gradient(135deg, #00d4ff, #7b2cbf); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .hero p { font-size: 15px; color: var(--text-muted); line-height: 1.8; margin: 0 auto 35px; max-width: 680px; }
+
+        .hero-buttons { display: flex; justify-content: center; align-items: center; gap: 15px; margin-bottom: 40px; flex-wrap: wrap; }
+        .btn-action {
+            padding: 13px 30px; border-radius: 12px; font-weight: 700; font-size: 14px; border: none; cursor: pointer;
+            transition: 0.3s; display: inline-flex; align-items: center; gap: 10px; text-decoration: none;
+        }
+        .btn-action-explore { background: #00d4ff; color: #050510; box-shadow: 0 0 25px rgba(0, 212, 255, 0.4); }
+        .btn-action-signin { background: rgba(255, 255, 255, 0.12); color: #fff; border: 1px solid rgba(255, 255, 255, 0.25); backdrop-filter: blur(10px); }
+        .btn-action:hover { transform: translateY(-3px) scale(1.04); }
+
+        .page { display: none; min-height: 100vh; padding: 110px 20px 60px; position: relative; z-index: 5; max-width: 1150px; margin: 0 auto; }
+        .page.active { display: block; animation: fadeIn 0.4s forwards; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        .section-title { text-align: center; margin-bottom: 35px; }
+        .section-title h2 { font-size: 30px; font-weight: 800; color: #fff; }
+        .section-title p { color: var(--text-muted); font-size: 14px; margin-top: 5px; }
+
+        .sub-header { font-size: 20px; font-weight: 700; margin: 30px 0 15px; border-left: 4px solid #00d4ff; padding-left: 12px; color: #fff; }
+
+        .grid-container { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 20px; }
+        .card { 
+            background: var(--card-bg); border: 1px solid rgba(255, 255, 255, 0.12); 
+            border-radius: 16px; padding: 25px; text-align: center; backdrop-filter: blur(12px); transition: 0.3s;
+            display: flex; flex-direction: column; justify-content: space-between;
+        }
+        .card:hover { transform: translateY(-5px); border-color: var(--secondary); box-shadow: 0 10px 25px rgba(0, 212, 255, 0.2); }
+        .card-icon { font-size: 40px; margin-bottom: 15px; color: var(--primary-pink); }
+        .card-price { font-size: 24px; font-weight: 800; color: #00d4ff; margin: 12px 0; }
+        .btn-card { 
+            width: 100%; padding: 10px; background: var(--gradient2); border: none; border-radius: 8px; 
+            color: white; font-weight: bold; cursor: pointer; transition: 0.3s; display: flex; align-items: center; justify-content: center; gap: 8px;
+        }
+        .btn-card:hover { opacity: 0.9; transform: scale(1.02); }
+
+        /* AUTH CARD STYLES */
+        .auth-wrapper { display: flex; justify-content: center; align-items: center; min-height: 75vh; padding: 20px 0; }
+        .auth-card {
+            width: 100%; max-width: 420px; 
+            background: linear-gradient(180deg, rgba(12, 12, 28, 0.78) 0%, rgba(8, 8, 22, 0.92) 100%), 
+                        url('https://i.ibb.co/Rp7zvtnc/b173e7676f44ce7ea4d95f0fff645bb7.jpg') center/cover no-repeat;
+            border-radius: 24px; border: 1px solid rgba(255,255,255,0.18);
+            padding: 30px 25px; backdrop-filter: blur(20px);
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6), 0 0 30px rgba(196, 77, 255, 0.25);
+            animation: popUp 0.5s ease-out; position: relative;
+        }
+        @keyframes popUp { from { opacity: 0; transform: scale(0.9) translateY(20px); } to { opacity: 1; transform: scale(1) translateY(0); } }
+
+        .auth-tabs { display: flex; background: rgba(0, 0, 0, 0.4); padding: 4px; border-radius: 12px; margin-bottom: 25px; border: 1px solid rgba(255,255,255,0.12); }
+        .auth-tab-btn { flex: 1; padding: 10px; border: none; background: transparent; color: var(--text-muted); font-weight: 700; font-size: 14px; border-radius: 8px; cursor: pointer; transition: 0.3s; }
+        .auth-tab-btn.active { background: var(--gradient1); color: #fff; box-shadow: 0 0 15px rgba(255, 107, 157, 0.4); }
+
+        .auth-form { display: none; flex-direction: column; gap: 16px; }
+        .auth-form.active-form { display: flex; animation: slideIn 0.35s ease-out forwards; }
+        @keyframes slideIn { from { opacity: 0; transform: translateX(15px); } to { opacity: 1; transform: translateX(0); } }
+
+        .input-group { position: relative; }
+        .input-group i { position: absolute; left: 14px; top: 50%; transform: translateY(-50%); color: var(--primary-pink); font-size: 15px; }
+        .input-group input {
+            width: 100%; padding: 12px 14px 12px 42px; background: rgba(0, 0, 0, 0.5);
+            border: 1px solid rgba(255, 255, 255, 0.2); border-radius: 10px; color: #fff;
+            font-size: 14px; outline: none; transition: 0.3s;
+        }
+        .input-group input:focus { border-color: #00d4ff; box-shadow: 0 0 12px rgba(0, 212, 255, 0.4); }
+
+        .btn-submit {
+            width: 100%; padding: 12px; background: var(--gradient1); border: none;
+            border-radius: 10px; color: #fff; font-weight: 700; font-size: 15px;
+            cursor: pointer; transition: 0.3s; margin-top: 5px; box-shadow: 0 5px 15px rgba(196, 77, 255, 0.3);
+        }
+        .btn-submit:hover { transform: translateY(-2px); opacity: 0.95; }
+
+        .auth-divider { display: flex; align-items: center; gap: 10px; margin: 18px 0; color: var(--text-muted); font-size: 12px; }
+        .auth-divider::before, .auth-divider::after { content: ''; flex: 1; height: 1px; background: rgba(255,255,255,0.15); }
+
+        .btn-google {
+            width: 100%; padding: 11px; background: rgba(255, 255, 255, 0.95); border: none;
+            border-radius: 10px; color: #111; font-weight: 700; font-size: 14px;
+            cursor: pointer; transition: 0.3s; display: flex; align-items: center;
+            justify-content: center; gap: 10px; box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+        }
+        .btn-google img { width: 18px; height: 18px; }
+        .btn-google:hover { background: #ffffff; transform: translateY(-2px); box-shadow: 0 6px 18px rgba(255,255,255,0.2); }
+
+        /* ACCOUNT & TABLES */
+        .account-box { background: var(--card-bg); border-radius: 20px; border: 1px solid rgba(255,255,255,0.12); padding: 30px; backdrop-filter: blur(15px); margin-bottom: 30px; }
+        .profile-header { display: flex; align-items: center; gap: 20px; flex-wrap: wrap; }
+        .profile-avatar { width: 80px; height: 80px; border-radius: 50%; background: var(--gradient1); display: flex; align-items: center; justify-content: center; font-size: 35px; color: white; overflow: hidden; }
+        .profile-avatar img { width: 100%; height: 100%; object-fit: cover; }
+        .profile-info h3 { font-size: 24px; color: #fff; }
+        .balance-badge { display: inline-block; background: rgba(0, 212, 255, 0.15); border: 1px solid #00d4ff; color: #00d4ff; padding: 4px 12px; border-radius: 15px; font-weight: bold; margin-top: 5px; }
+
+        .table-custom { width: 100%; border-collapse: collapse; margin-top: 15px; text-align: left; font-size: 14px; }
+        .table-custom th, .table-custom td { padding: 12px 15px; border-bottom: 1px solid rgba(255,255,255,0.08); }
+        .table-custom th { color: var(--primary-pink); font-weight: 700; background: rgba(255,255,255,0.02); }
+
+        /* CODE TESTER */
+        .code-tester-container { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+        @media (max-width: 800px) { .code-tester-container { grid-template-columns: 1fr; } }
+        .code-input-area, .code-output-area { background: rgba(5, 5, 18, 0.85); border: 1px solid rgba(255,255,255,0.15); border-radius: 12px; padding: 15px; }
+        textarea.code-editor {
+            width: 100%; height: 260px; background: #0a0a16; color: #00ffcc; border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 8px; padding: 12px; font-family: monospace; font-size: 14px; outline: none; resize: vertical;
+        }
+        iframe.code-preview { width: 100%; height: 260px; background: #ffffff; border-radius: 8px; border: none; }
+
+        .footer { text-align: center; padding: 25px; color: var(--text-muted); font-size: 13px; border-top: 1px solid rgba(255,255,255,0.08); margin-top: 40px; }
+
+        @media (max-width: 850px) {
+            .navbar { padding: 10px 12px; }
+            .logo { gap: 6px; }
+            .logo-icon { width: 28px; height: 28px; font-size: 14px; border-radius: 6px; }
+            .logo-text { font-size: 14px; }
+            .nav-links { display: none; }
+            .hamburger { display: flex; }
+            .hero h1 { font-size: 28px; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- BACKGROUND & CANVAS -->
+    <div class="global-bg-wrapper">
+        <img src="https://i.ibb.co/4wSXdY5x/c080e5c63a65fc69a5e0ee9cb2a60952.jpg" alt="Anime Background" class="global-bg-img">
+    </div>
+    <div class="global-bg-overlay"></div>
+    <canvas id="sakuraCanvas"></canvas>
+
+    <!-- NAVIGATION BAR -->
+    <nav class="navbar">
+        <div class="logo" onclick="showPage('home')">
+            <div class="logo-icon">N</div>
+            <div class="logo-text">NiceStore</div>
+        </div>
+        <ul class="nav-links">
+            <li><a id="nav-home" onclick="showPage('home')"><i class="fas fa-home"></i> Home</a></li>
+            <li><a id="nav-minecraft" onclick="showPage('minecraft')"><i class="fas fa-cube"></i> Minecraft</a></li>
+            <li><a id="nav-plugin" onclick="showPage('plugin')"><i class="fas fa-plug"></i> Plugin</a></li>
+            <li><a id="nav-account" onclick="showPage('account')"><i class="fas fa-user-circle"></i> Account</a></li>
+            <li><a id="nav-orders" onclick="showPage('orders')"><i class="fas fa-shopping-cart"></i> Orders</a></li>
+            <li><a id="nav-learning" onclick="showPage('learning')"><i class="fas fa-code"></i> Learning Code</a></li>
+        </ul>
+        <div class="nav-right">
+            <button class="cart-btn" onclick="showPage('orders')">
+                <i class="fas fa-shopping-bag"></i>
+                <span class="cart-count" id="cartCount">0</span>
+            </button>
+            <button class="btn-nav-auth" id="btnNavAuth" onclick="showPage('auth')">
+                <i class="fas fa-sign-in-alt"></i> Login
+            </button>
+            <div class="hamburger" onclick="toggleMobileMenu()">
+                <span></span><span></span><span></span>
+            </div>
+        </div>
+    </nav>
+
+    <!-- MOBILE SIDE DRAWER MENU -->
+    <div class="mobile-menu" id="mobileMenu">
+        <button class="close-menu-btn" onclick="toggleMobileMenu()">&times;</button>
+        <a onclick="showPage('home'); toggleMobileMenu()"><i class="fas fa-home"></i> Home</a>
+        <a onclick="showPage('minecraft'); toggleMobileMenu()"><i class="fas fa-cube"></i> Minecraft</a>
+        <a onclick="showPage('plugin'); toggleMobileMenu()"><i class="fas fa-plug"></i> Plugin</a>
+        <a onclick="showPage('account'); toggleMobileMenu()"><i class="fas fa-user-circle"></i> Account</a>
+        <a onclick="showPage('orders'); toggleMobileMenu()"><i class="fas fa-shopping-cart"></i> Orders</a>
+        <a onclick="showPage('learning'); toggleMobileMenu()"><i class="fas fa-code"></i> Learning Code</a>
+        <a id="mobileNavAuth" onclick="showPage('auth'); toggleMobileMenu()"><i class="fas fa-sign-in-alt"></i> Login / Register</a>
+    </div>
+
+    <!-- PAGE: HOME -->
+    <div class="page active" id="page-home">
+        <section class="hero">
+            <div class="hero-content">
+                <div class="hero-badge">NICE STORE • OFFICIAL SERVER</div>
+                <h1>ស្វាគមន៍មកកាន់ <span class="txt-pink">NiceStore</span> <br><span class="txt-blue">Minecraft, Plugins & Coding</span></h1>
+                <p>ទិញ Rank, Item Key, Plugin គុណភាពខ្ពស់ និងរៀនសរសេរកូដបង្កើត Minecraft Plugin ដោយឥតគិតថ្លៃនៅទីនេះ!</p>
+                <div class="hero-buttons">
+                    <button class="btn-action btn-action-explore" onclick="showPage('minecraft')"><i class="fas fa-gamepad"></i> មើល Minecraft Store</button>
+                    <button class="btn-action btn-action-signin" onclick="showPage('auth')"><i class="fas fa-sign-in-alt"></i> ចូលគណនី / Login</button>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- PAGE: AUTH (LOGIN & REGISTER) -->
+    <div class="page" id="page-auth">
+        <div class="auth-wrapper">
+  
